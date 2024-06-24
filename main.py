@@ -65,10 +65,12 @@ def check_wifi_windows():
         # Check if the command ran successfully
         if result.returncode == 0:
             output = result.stdout
-            if "State" in output and "connected" in output:
+            if "State" in output and "connected" in output and "UniVillage" in output:
                 print("Wi-Fi is connected.")
+                return True
             else:
                 print("Wi-Fi is not connected.")
+                return False
         else:
             print(f"Command failed with error code: {result.returncode}")
     except Exception as e:
@@ -76,11 +78,23 @@ def check_wifi_windows():
 
 
 if __name__ == "__main__":
-    login_wifi(
-        email="mubashirshoukat@gmail.com",
-        password="12345678",
-        mac_address="50:2F:9B:CF:55:5D",
-        nasid="Univillage-Block+A",
-        uamip="login.extremebb.net"
-    )
-    check_wifi_windows()
+    
+    status = check_wifi_windows()
+
+    with open('cred.txt', 'r') as file:
+        lines = file.readlines()
+
+    lines = [line.strip() for line in lines]
+
+    email = lines[0]
+    password = lines[1]
+    mac_address = lines[2]
+
+    if status:
+        login_wifi(
+            email=email,
+            password=password,
+            mac_address=mac_address,
+            nasid="Univillage-Block+A",
+            uamip="login.extremebb.net"
+        )
